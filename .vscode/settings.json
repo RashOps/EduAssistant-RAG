@@ -1,0 +1,7 @@
+{
+    "go.goroot": "C:\\Users\\Rayhan\\AppData\\Local\\mise\\installs\\go\\1.26.3",
+    "go.alternateTools": {
+        "go": "c:\\users\\rayhan\\appdata\\local\\mise\\shims\\go",
+        "gopls": "c:\\users\\rayhan\\appdata\\local\\mise\\shims\\gopls.exe"
+    }
+}

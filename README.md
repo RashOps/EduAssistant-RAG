@@ -1,33 +1,82 @@
-# Etape 1
+# 🎓 Assistant RAG Local - Gestion Documentaire École
 
-Prompt 1 
-"content": "Explique le RAG en une phrase."
-uv run etape1.py
-Le rôle des agences d'influence et de publicité (RAG) est un concept qui désigne les entreprises qui utilisent la publicité sur internet pour promouvoir et créer du buzz autour de produits ou de marques en ligne.
+Ce projet met en œuvre un assistant intelligent local (RAG - Retrieval-Augmented Generation) conçu pour aider les étudiants d'un organisme de formation à trouver instantanément des réponses fiables et sourcées à leurs questions quotidiennes.
 
-Prompt 2
-"content": "Donne 3 idées de noms d'app."
- uv run etape1.py
-Voici trois idées pour un nom d'application :
-1. **AppLynx** : Ce nom est court et facile à retenir, il suggère une application liée au monde des réseaux (lynx).
-2. **MonDiary** : Cette app peut être dédiée à la gestion de l'alimentation, parexemple.
-3. **Journify** : Ce nom s'inspire de la racine "jour" et suggère une application liée aux agendas, à la planification quotidienne.
+Il s'appuie exclusivement sur les documents officiels de l'école (Règlement intérieur, Syllabus des cours, Informations pratiques et Contacts) et garantit la confidentialité absolue des données en fonctionnant entièrement en local.
 
-# Etape 2
-{"role": "system", "content":
-"Tu es un assistant qui répond en français, de façon claire et brève. "
-"Si tu ne sais pas, dis-le honnêtement."},
-{"role": "user", "content": "Qu'est-ce qu'une base de données ?"}
+---
+## 📱 Démo 
+[![Watch the video](image.png)](Démo.mp4)
+> Regarder la démo de l'assistant RAG
 
-uv run etape2.py
-Une base de données est un ensemble organisé d'informations numériques stockées dans une structure déterminée pour les gérer, les sauvegarder et les consulter facilement. Cela peut être des textes, des chiffres, des images, etc.
+---
+## 🛠️ Stack Technique
 
-Il existe plusieurs types de bases de données : relationnelles (comme MySQL ou Microsoft SQL), NoSQL (par exemple MongoDB), documentaires, graphiques, etc. Chaque type a sa propre manière d'organiser et de manipuler les données.
+- **Gestionnaire d'environnement** : `uv` (gestion ultra-rapide des dépendances Python)
+- **Base de données vectorielle** : `ChromaDB` (stockage persistant local des embeddings)
+- **Modèles de langage et d'embedding (Ollama)** :
+  - Génération de texte : `llama3.1:8b` (température à 0.0 pour éliminer les hallucinations)
+  - Embedding : `nomic-embed-text`
+- **Lecteur PDF** : `pypdf`
+- **Interface utilisateur** : `Streamlit` (avec design personnalisé premium et moderne)
 
-# Etape 3
-uv run rag.py
-Les cours se terminent à 17h.
+---
 
-uv run rag.py
-Question: C'est quand la prochaine coupe du monde ?
-Je ne sais pas. 
+## 📁 Structure du Projet
+
+```text
+├── docs/                      # Dépôt des documents officiels (uniquement des fichiers PDF)
+│   ├── reglement_interieur.pdf
+│   ├── syllabus_cours.pdf
+│   └── infos_pratiques.pdf
+├── src/                       # Code source de l'application
+│   ├── app.py                 # Interface web Streamlit
+│   ├── rag.py                 # Cœur de l'application RAG (ingestion, vectorisation, requêtage)
+│   └── archive/               # Fichiers historiques du TP
+│       ├── etape1.py
+│       ├── etape2.py
+│       └── main.py
+├── scripts/                   # Scripts utilitaires de génération de données
+│   ├── generate_docs.py       # Génération automatisée des 3 PDF modèles
+│   └── reorganize.py          # Script de réorganisation des fichiers
+├── pyproject.toml             # Configuration du projet et dépendances
+└── README.md                  # Ce guide
+```
+
+---
+
+## 🚀 Installation et Utilisation
+
+### Prerequis
+
+1. **Ollama** doit être installé et en cours d'exécution sur votre machine.
+2. Assurez-vous d'avoir téléchargé les deux modèles requis :
+   ```bash
+   ollama pull llama3.1:8b
+   ollama pull nomic-embed-text
+   ```
+
+### Lancement de l'Application
+
+Pour installer automatiquement les dépendances du projet et lancer l'application web Streamlit en une seule commande, utilisez `uv` :
+
+```bash
+uv run streamlit run src/app.py
+```
+
+### Fonctionnalités de l'Interface
+
+- **Recherche Instantanée** : Posez votre question dans la zone de texte (ex: *"Quelles sont les règles pour justifier une absence ?"*).
+- **Citations des Sources** : Pour chaque réponse générée, l'assistant affiche les morceaux de texte correspondants, en précisant le document d'origine et la page exacte.
+- **Sécurité Anti-Hallucination** : Si l'information n'est pas présente dans les documents, l'assistant répondra strictement *"Je ne sais pas."*.
+- **Réindexation Dynamique** : Modifiez, ajoutez ou supprimez des documents PDF dans le dossier `docs/` et cliquez sur le bouton **"Réindexer les documents"** dans le menu latéral pour mettre à jour la base de données vectorielle instantanément.
+
+---
+
+## 📈 Impact Stratégique & ROI (Alignement Métier)
+
+D'un point de vue stratégique et organisationnel, la mise en œuvre de cet assistant présente des bénéfices tangibles :
+
+1. **Optimisation du Temps Administratif (ROI Indirect)** : En répondant automatiquement à 80% des questions répétitives des étudiants (ex: horaires, wifi, contacts), l'assistant libère du temps pour l'équipe pédagogique et administrative. Ce temps peut être réalloué à des tâches d'accompagnement à plus haute valeur ajoutée.
+2. **Amélioration de l'Expérience Étudiant (Retention Rate)** : Les étudiants disposent d'un guichet unique disponible 24h/24 pour leurs requêtes. L'accès immédiat à l'information réduit la friction, l'anxiété liée aux examens et les retards de rendu de projets.
+3. **Sécurité et Gouvernance des Données** : Le déploiement local via Ollama élimine tout risque de fuite de documents internes ou de données nominatives vers des serveurs tiers (contrairement à l'utilisation d'API comme OpenAI ou Anthropic), un atout majeur en termes de conformité RGPD.

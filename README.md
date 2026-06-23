@@ -80,3 +80,33 @@ D'un point de vue stratégique et organisationnel, la mise en œuvre de cet assi
 1. **Optimisation du Temps Administratif (ROI Indirect)** : En répondant automatiquement à 80% des questions répétitives des étudiants (ex: horaires, wifi, contacts), l'assistant libère du temps pour l'équipe pédagogique et administrative. Ce temps peut être réalloué à des tâches d'accompagnement à plus haute valeur ajoutée.
 2. **Amélioration de l'Expérience Étudiant (Retention Rate)** : Les étudiants disposent d'un guichet unique disponible 24h/24 pour leurs requêtes. L'accès immédiat à l'information réduit la friction, l'anxiété liée aux examens et les retards de rendu de projets.
 3. **Sécurité et Gouvernance des Données** : Le déploiement local via Ollama élimine tout risque de fuite de documents internes ou de données nominatives vers des serveurs tiers (contrairement à l'utilisation d'API comme OpenAI ou Anthropic), un atout majeur en termes de conformité RGPD.
+
+---
+
+## 📐 Architecture Technique du RAG
+
+Le schéma ci-dessous illustre le fonctionnement des deux pipelines clés de l'application : l'**indexation des documents** (à froid) et le **requêtage sémantique** (à chaud).
+
+```mermaid
+flowchart TD
+    subgraph Ingestion ["1. Pipeline d'Indexation (À froid)"]
+        A[Documents PDF dans docs/] --> B[Extracteur de texte pypdf]
+        B --> C[Découpage sémantique Chunks de 700 chars]
+        C --> D[Ajout du préfixe search_document: ]
+        D --> E[Vectorisation nomic-embed-text]
+        E --> F[(Base Vectorielle ChromaDB sur Disque)]
+    end
+
+    subgraph QueryPipeline ["2. Pipeline de Requêtage (À chaud)"]
+        G[Question de l'étudiant dans Streamlit] --> H[Ajout du préfixe search_query: ]
+        H --> I[Vectorisation nomic-embed-text]
+        I --> J[Recherche sémantique Top 4 Chunks]
+        F --> J
+        J --> K[Assemblage du Contexte et Prompt Strict]
+        K --> L[Inférence LLM llama3.1:8b Température 0.0]
+        L --> M[Réponse sécurisée ou 'Je ne sais pas' + Citation des sources dans l'UI]
+    end
+    
+    style Ingestion fill:#f9f9f9,stroke:#333,stroke-width:1px
+    style QueryPipeline fill:#f5faff,stroke:#1e3a8a,stroke-width:1.5px
+```
